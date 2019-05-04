@@ -1,0 +1,9 @@
+Django
+dj-database-url
+django-extensions
+django-localflavor
+django-widget-tweaks
+names
+python-decouple
+pytz
+six
