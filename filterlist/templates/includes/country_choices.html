@@ -1,0 +1,20 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for country in countries %}
+        <tr>
+            <td>
+                <a href=""
+                   class="country"
+                   data-url="{% url 'filterlist:state_choices_ajax' %}?uf={{country.id}}"
+                   data-uf="{{country.id}}"
+                >{{country.name}}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,16 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for city in cities %}
+        <tr>
+            <td>
+                <a href="{% url 'filterlist:filter_result' city.id %}">{{city.name}}</a>
+             </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

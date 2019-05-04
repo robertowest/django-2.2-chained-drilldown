@@ -1,0 +1,82 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h2>Ejemplo de uso de drilldown dependientes</h2>
+        <p><i>El primer drilldown filtra el contenido del siguiente.</i></p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {% include 'table_result.html' %}
+        </div>
+        <div class="col-md-3" style="background-color: #e9ecef;">
+            {% include 'form_select.html' %}
+        </div>
+    </div>
+</div>
+<hr>
+{% endblock content %}
+
+{% block js %}
+<script>
+    $(document).ready(function() {
+        let urlPath = '{% url 'filterselect:country_choices_ajax' %}';
+        $.ajax({
+            url: urlPath,
+            success: function(response) {
+                $('#countrySelect').html(response);
+            }
+        })
+        event.preventDefault();
+    });
+
+    $('#countrySelect').change(function() {
+        let urlPath = '{% url 'filterselect:state_choices_ajax' %}';
+        let ufId = $(this).val();
+
+        $.ajax({
+            url: urlPath,
+            data: {uf: ufId},
+            success: function(response) {
+                $('#stateSelect').html(response);
+                $('#citySelect').html('<option value="">---------------------</option>');
+            }
+        })
+    });
+
+    $('#stateSelect').change(function() {
+        let urlPath = '{% url 'filterselect:city_choices_ajax' %}';
+        let ufId = $(this).val();
+
+        $.ajax({
+            url: urlPath,
+            data: {uf: ufId},
+            success: function(response) {
+                $('#citySelect').html(response);
+            }
+        })
+    });
+
+    $(document).on('click', '.btn', function(event) {
+        let urlPath = '{% url 'filterselect:filter_result' %}';
+        let ufId = 999;
+
+        $.ajax({
+            url: urlPath,
+            dataType: "HTML",
+            data: {uf: ufId},
+            success: function(response) {
+                $("#tableResult tbody").empty();
+                $('#tableResult tbody').append(response);
+            }
+        })
+        event.preventDefault();
+        alert('ok');
+    });
+
+</script>
+{% endblock js %}

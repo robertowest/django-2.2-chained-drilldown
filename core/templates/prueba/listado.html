@@ -1,0 +1,115 @@
+{% extends "prueba/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <style>
+        label {
+            padding: 10px;
+        }
+    </style>
+    <div class="jumbotron">
+        <div class="container">
+            <h2>Ejemplo de dropdowns dependientes</h2>
+            <p><i>El primer dropdown filtra el contenido del segundo</i></p>
+            <div style="border: dashed 1px grey;">
+                <form id="myForm"
+                    method="GET"
+                    class="form-inline"
+                    data-urlcities="{% url 'core:cities_choices_ajax' %}"
+                    data-urldistricts="{% url 'core:districts_choices_ajax' %}"
+                    >
+                    <div class="form-group" style="padding:10px;">
+                        <label for="citySelect">Cidade</label>
+                        <select class="form-control" id="citySelect">
+                            {% for city in cities %}
+                            <option value="{{city.uf}}">{{city.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group" style="padding:10px;">
+                        <label for="districtSelect">Bairro</label>
+                        <select class="form-control" id="districtSelect" name="district">
+                            <option>---------------------</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success" type="submit">Filtro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Bairro</th>
+                            <th>Cidade</th>
+                            <th>UF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for person in persons %}
+                        <tr>
+                            <td>{{ person.name }}</td>
+                            <td>{{ person.email }}</td>
+                            <td>{{ person.phone }}</td>
+                            <td>{{ person.district }}</td>
+                            <td>{{ person.district.city }}</td>
+                            <td>{{ person.district.city.uf }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr>
+{% endblock content %}
+
+{% block js %}
+    <script>
+        $('#id_state').change(function() {
+          let urlCities = $('#myForm').data('urlcities');
+          let ufIdCity = $(this).val();
+          // console.log(ufIdCity);
+          // console.log(urlCities);
+
+          $.ajax({
+            url: urlCities,
+            data: {
+              uf: ufIdCity
+            },
+            success: function(response) {
+              $('#citySelect').html(response);
+              $('#districtSelect').html('<option value="">---------------------</option>');
+            }
+          })
+        });
+
+        $('#citySelect').change(function() {
+          let urlDistricts = $('#myForm').data('urldistricts');
+          let cityIdDistrict = $(this).val();
+          console.log(urlDistricts);
+          console.log(cityIdDistrict);
+
+          $.ajax({
+            url: urlDistricts,
+            data: {
+              city: cityIdDistrict
+            },
+            success: function(response) {
+              $('#districtSelect').html(response);
+            }
+          })
+        });
+    </script>
+{% endblock js %}
+

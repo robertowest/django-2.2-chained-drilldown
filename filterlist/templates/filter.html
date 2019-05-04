@@ -1,0 +1,77 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h2>Ejemplo de uso de listas dependientes</h2>
+        <p><i>La primera lista filtra el contenido de la siguiente.</i></p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="countries">
+                <h5>Países</h5>
+                <div id="id_country"></div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="states">
+                <h5>Estados</h5>
+                <div id="id_state"></div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="cities">
+                <h5>Provincias</h5>
+                <div id="id_city"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+{% endblock content %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    let urlPath = '{% url 'filterlist:country_choices_ajax' %}';
+    $.ajax({
+        url: urlPath,
+        success: function(response) {
+            $('#id_country').html(response);
+        }
+    })
+    event.preventDefault();
+});
+
+$(document).on('click', '.country', function(event) {
+    let url = $(this).data('url');
+    let uf = $(this).data('uf');
+
+    $.ajax({
+        url: url,
+        data: {uf: uf},
+        success: function(response) {
+            $('#id_state').html(response);
+        }
+    })
+    event.preventDefault();
+});
+
+$(document).on('click', '.state', function(event) {
+    let url = $(this).data('url');
+    let uf = $(this).data('uf');
+
+    $.ajax({
+        url: url,
+        data: {uf: uf},
+        success: function(response) {
+            $('#id_city').html(response);
+        }
+    })
+    event.preventDefault();
+});
+</script>
+{% endblock js %}
